@@ -135,6 +135,17 @@ public:
   void SetTextureCoordinate(int i, ON_2fPoint tc) { m_mesh->m_T[i] = tc; }
 };
 
+class BND_MeshVertexColorList
+{
+  ON_ModelComponentReference m_component_reference;
+  ON_Mesh* m_mesh = nullptr;
+public:
+  BND_MeshVertexColorList(ON_Mesh* mesh, const ON_ModelComponentReference& compref);
+  int Count() const { return m_mesh->m_C.Count(); }
+  BND_Color GetColor(int i) const;
+  void SetColor(int i, const BND_Color& color);
+  void AddColor(const BND_Color& color);
+};
 
 class BND_Mesh : public BND_GeometryBase
 {
@@ -157,7 +168,7 @@ public:
   BND_MeshFaceList GetFaces();
   //public Collections.MeshNgonList Ngons
   //public Collections.MeshFaceNormalList FaceNormals
-  //public Collections.MeshVertexColorList VertexColors
+  BND_MeshVertexColorList VertexColors();
   BND_MeshTextureCoordinateList TextureCoordinates();
   //public Collections.MeshVertexStatusList ComponentStates
 

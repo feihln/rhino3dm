@@ -138,6 +138,11 @@ BND_MeshNormalList BND_Mesh::GetNormals()
   return BND_MeshNormalList(m_mesh, m_component_ref);
 }
 
+BND_MeshVertexColorList BND_Mesh::VertexColors()
+{
+  return BND_MeshVertexColorList(m_mesh, m_component_ref);
+}
+
 BND_MeshTextureCoordinateList BND_Mesh::TextureCoordinates()
 {
   return BND_MeshTextureCoordinateList(m_mesh, m_component_ref);
@@ -312,6 +317,27 @@ BND_MeshTextureCoordinateList::BND_MeshTextureCoordinateList(ON_Mesh* mesh, cons
   m_mesh = mesh;
 }
 
+BND_MeshVertexColorList::BND_MeshVertexColorList(ON_Mesh* mesh, const ON_ModelComponentReference& compref)
+{
+  m_component_reference = compref;
+  m_mesh = mesh;
+}
+
+BND_Color BND_MeshVertexColorList::GetColor(int i) const
+{
+  return ON_Color_to_Binding(m_mesh->m_C[i]);
+}
+
+void BND_MeshVertexColorList::SetColor(int i, const BND_Color& color)
+{
+  m_mesh->m_C[i] = Binding_to_ON_Color(color);
+}
+
+void BND_MeshVertexColorList::AddColor(const BND_Color& color)
+{
+  m_mesh->m_C.Append(Binding_to_ON_Color(color));
+}
+
 
 
 #if defined(ON_PYTHON_COMPILE)
@@ -387,6 +413,13 @@ void initMeshBindings(pybind11::module& m)
     .def("__setitem__", &BND_MeshTextureCoordinateList::SetTextureCoordinate)
     ;
 
+  py::class_<BND_MeshVertexColorList>(m, "MeshVertexColorList")
+    .def("__len__", &BND_MeshVertexColorList::Count)
+    .def("__getitem__", &BND_MeshVertexColorList::GetColor)
+    .def("__setitem__", &BND_MeshVertexColorList::SetColor)
+    .def("append", &BND_MeshVertexColorList::AddColor)
+    ;
+
   py::class_<BND_Mesh, BND_GeometryBase>(m, "Mesh")
     .def(py::init<>())
     .def_property_readonly("IsClosed", &BND_Mesh::IsClosed)
@@ -395,6 +428,7 @@ void initMeshBindings(pybind11::module& m)
     .def_property_readonly("Vertices", &BND_Mesh::GetVertices)
     .def_property_readonly("Faces", &BND_Mesh::GetFaces)
     .def_property_readonly("Normals", &BND_Mesh::GetNormals)
+    .def_property_readonly("VertexColors", &BND_Mesh::VertexColors)
     .def_property_readonly("TextureCoordinates", &BND_Mesh::TextureCoordinates)
     .def("ClearTextureData", &BND_Mesh::ClearTextureData)
     .def("ClearSurfaceData", &BND_Mesh::ClearSurfaceData)
