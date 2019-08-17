@@ -45,9 +45,23 @@ Note: A list of builds is available on our [Circleci project](https://circleci.c
 **rhino3dm.js** is also available on npm; try `npm install rhino3dm`.
 
 ```js
-rhino3dm = require('rhino3dm')() // note the trailing "()"
-sphere = new rhino3dm.Sphere([1,2,3,], 12)
+$ node
+> rhino3dm = require('rhino3dm')() // note the trailing "()"
+> sphere = new rhino3dm.Sphere([1,2,3,], 12)
 ```
+
+It takes a moment to load the ~5 MB wasm file – this happens asycnhronously. Unlike interactive usage, when scripting with `rhino3dm` you can use the fact that the `rhino3dm()` function returns a `Promise`.
+
+```js
+# script.js
+rhino3dm = require('rhino3dm')
+
+rhino3dm().then((rhino) => {
+  sphere = new rhino.Sphere([1,2,3,], 12)
+  console.log(sphere.radius)
+})
+```
+
 
 ## API Docs
 The latest [rhino3dm.js API Documentation](https://mcneel.github.io/rhino3dm/javascript/api/index.html)
@@ -61,6 +75,8 @@ An advanced sample creates a 3dm file viewer in a web browser.  The html+javascr
 <img src="docs/images/rhino3dm_rhinologo.png" width="300"></img>
 
 **rhino3dm.js** is used to read a 3dm file and create an instance of a File3dm class in the browser’s memory.  It then walks through the objects in the model and calls compute.rhino3d.com to create meshes and isocurves for the polysurface. These meshes and isocurves are then added to a three.js scene for display.
+
+Here's [another example](https://observablehq.com/@pearswj/using-rhino3dm-in-observable/2) of rhino3dm.js, this time running in one of [Observable](http://observablehq.com/)'s live notebooks. Dive right in an tweak the code!
 
 ## Build from source
 

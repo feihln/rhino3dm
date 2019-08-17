@@ -105,7 +105,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='rhino3dm',
-    version='0.3.0',
+    version='0.5.0',
     author='Robert McNeel & Associates',
     author_email='steve@mcneel.com',
     description='Python library based on OpenNURBS with a RhinoCommon style',
@@ -143,4 +143,5 @@ for i in range(len(model.Objects)):
     ext_modules=[CMakeExtension('rhino3dm/_rhino3dm')],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
+    include_package_data=True
 )

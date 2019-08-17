@@ -190,6 +190,10 @@ BND_CommonObject* BND_CommonObject::CreateWrapper(ON_Object* obj, const ON_Model
   if (idef)
     return new BND_InstanceDefinitionGeometry(idef, compref);
 
+  ON_3dmRenderSettings* render_settings = ON_3dmRenderSettings::Cast(obj);
+  if (render_settings)
+    return new BND_RenderSettings(render_settings, compref);
+
   return new BND_CommonObject(obj, compref);
 }
 
@@ -1422,7 +1426,7 @@ BND_CommonObject* BND_CommonObject::Decode(BND_DICT jsonObject)
   std::string decoded = base64_decode(buffer);
   int rhinoversion = IntFromDict(jsonObject,"archive3dm");
   int opennurbsversion = IntFromDict(jsonObject,"opennurbs");
-  int length = decoded.length();
+  int length = (int)decoded.length();
   const unsigned char* c = (const unsigned char*)&decoded.at(0);
   ON_Object* obj = ON_ReadBufferArchive(rhinoversion, opennurbsversion, length, c);
   return CreateWrapper(obj, nullptr);
